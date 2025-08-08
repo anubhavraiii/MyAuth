@@ -40,7 +40,8 @@ passport.use(new GoogleStrategy({
             name: profile.displayName,
             email: profile.emails[0].value,
             profilePicture: profile.photos && profile.photos[0] ? profile.photos[0].value : '',
-            authProvider: 'google'
+            authProvider: 'google',
+            isVerified : true
         });
 
         done(null, user);
