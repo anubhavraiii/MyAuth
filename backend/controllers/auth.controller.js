@@ -31,21 +31,22 @@ const storeRefreshToken = async (userId, refreshToken) => {
 const setCookies = (res, accessToken, refreshToken) => {
     const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie("accessToken", accessToken, {
+    const options = {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-        domain: isProduction ? ".onrender.com" : undefined
-    });
+        maxAge: 15 * 60 * 1000 // 15 minutes
+    };
 
-    res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "none" : "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        domain: isProduction ? ".onrender.com" : undefined
-    });
+    if (isProduction) {
+        // CRITICAL: Add the leading dot to the domain
+        options.domain = ".onrender.com"; 
+    }
+
+    res.cookie("accessToken", accessToken, options);
+
+    options.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days for refresh token
+    res.cookie("refreshToken", refreshToken, options);
 }
 
 export const signup = async (req, res) => {
@@ -248,13 +249,18 @@ export const refreshToken = async (req, res) => {
 
         const isProduction = process.env.NODE_ENV === "production";
 
-        res.cookie("accessToken", accessToken, {
+        const options = {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? "none" : "lax",
-            maxAge: 15 * 60 * 1000, // 15 minutes
-            domain: isProduction ? ".onrender.com" : undefined
-        });
+            maxAge: 15 * 60 * 1000 // 15 minutes
+        };
+
+        if (isProduction) {
+            options.domain = ".onrender.com";
+        }
+
+        res.cookie("accessToken", accessToken, options);
 
         res.json({ message: "Access token refreshed successfully" });
     } catch (error) {
