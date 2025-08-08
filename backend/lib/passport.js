@@ -26,6 +26,7 @@ passport.use(new GoogleStrategy({
             // Link Google account to existing user
             user.googleId = profile.id;
             user.authProvider = 'google';
+            user.isVerified = true;
             if (profile.photos && profile.photos[0]) {
                 user.profilePicture = profile.photos[0].value;
             }
