@@ -29,18 +29,22 @@ const storeRefreshToken = async (userId, refreshToken) => {
 }
 
 const setCookies = (res, accessToken, refreshToken) => {
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.cookie("accessToken", accessToken, {
-        httpOnly: true,  // prevent xss attacks
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax", 
-        maxAge: 15 * 60 * 1000 // 15 minutes
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 15 * 60 * 1000, // 15 minutes
+        domain: isProduction ? ".onrender.com" : undefined
     });
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax", 
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        domain: isProduction ? ".onrender.com" : undefined
     });
 }
 
@@ -242,11 +246,14 @@ export const refreshToken = async (req, res) => {
             expiresIn: "15m"
         });
 
+        const isProduction = process.env.NODE_ENV === "production";
+
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 15 * 60 * 1000 // 15 minutes
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
+            maxAge: 15 * 60 * 1000, // 15 minutes
+            domain: isProduction ? ".onrender.com" : undefined
         });
 
         res.json({ message: "Access token refreshed successfully" });
