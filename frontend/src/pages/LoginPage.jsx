@@ -15,17 +15,21 @@ const LoginPage = () => {
 
 	// Handle Google auth callback
 	useEffect(() => {
-		const urlParams = new URLSearchParams(window.location.search);
-		const authStatus = urlParams.get('auth');
-		
-		if (authStatus === 'success') {
-			toast.success('Successfully signed in with Google!');
-			checkAuth(); // Refresh user state
-			navigate('/', { replace: true });
-		} else if (authStatus === 'error') {
-			toast.error('Google sign-in failed. Please try again.');
-			navigate('/login', { replace: true });
-		}
+		const handleAuthCallback = async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authStatus = urlParams.get('auth');
+        
+        if (authStatus === 'success') {
+            toast.success('Successfully signed in with Google!');
+            await checkAuth(); // Wait for the async task
+            navigate('/', { replace: true });
+        } else if (authStatus === 'error') {
+            toast.error('Google sign-in failed. Please try again.');
+            navigate('/login', { replace: true });
+        }
+    };
+
+    handleAuthCallback();
 	}, [navigate, checkAuth]);
 
 	const handleSubmit = async (e) => {
