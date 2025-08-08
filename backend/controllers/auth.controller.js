@@ -29,7 +29,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
 }
 
 const setCookies = (res, accessToken, refreshToken) => {
-    cres.cookie("accessToken", accessToken, {
+    res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict", 
