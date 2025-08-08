@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom"
 
 import HomePage from "./pages/HomePage.jsx"
 import LoginPage from "./pages/LoginPage.jsx"
@@ -16,10 +16,31 @@ import { useEffect } from "react"
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
 		checkAuth();
 	}, [checkAuth]);
+
+  // Handle Google auth callback
+  useEffect(() => {
+    const handleAuthCallback = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const authStatus = urlParams.get('auth');
+      
+      if (authStatus === 'success') {
+          toast.success('Successfully signed in with Google!');
+          await checkAuth();
+          // Use navigate to clean the URL by removing the query parameter
+          navigate('/', { replace: true });
+      } else if (authStatus === 'error') {
+          toast.error('Google sign-in failed. Please try again.');
+          navigate('/login', { replace: true });
+      }
+    };
+
+    handleAuthCallback();
+	}, [checkAuth, navigate]);
 
   if (checkingAuth) return <LoadingSpinner />;
 
