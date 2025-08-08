@@ -26,7 +26,7 @@ const SignUpPage = () => {
         if (authStatus === 'success') {
             toast.success('Successfully signed in with Google!');
             await checkAuth(); // Wait for the async task
-            navigate('/', { replace: true });
+            //navigate('/', { replace: true });
         } else if (authStatus === 'error') {
             toast.error('Google sign-in failed. Please try again.');
             navigate('/login', { replace: true });
